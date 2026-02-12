@@ -9,9 +9,15 @@ description = "Plugin Boutique price tracker"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "pytest>=9.0.2",
     "python-dotenv>=1.0.1",
     "selenium>=4.28.1",
     "webdriver-manager>=4.0.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
 ]
 
 [project.scripts]
