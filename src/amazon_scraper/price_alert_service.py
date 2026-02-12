@@ -1,9 +1,13 @@
+"""Application service that coordinates scraping and email notifications."""
+
 from .email_notifier import EmailNotifier
 from .models import PriceResult
 from .selenium_scraper import PluginBoutiqueSeleniumScraper
 
 
 class PriceAlertService:
+    """Runs the price check and triggers alert emails when threshold is met."""
+
     def __init__(self, scraper: PluginBoutiqueSeleniumScraper, notifier: EmailNotifier) -> None:
         self.scraper = scraper
         self.notifier = notifier

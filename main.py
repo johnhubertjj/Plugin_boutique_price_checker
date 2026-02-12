@@ -1,3 +1,5 @@
+"""Compatibility entrypoint for running the package from repository root."""
+
 from pathlib import Path
 import sys
 

@@ -1,7 +1,10 @@
+"""Command-line interface for the Plugin Boutique price alert tool."""
+
 import argparse
 import os
 
 def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments for URL, threshold, recipient, and mode."""
     parser = argparse.ArgumentParser(description="Track Plugin Boutique prices with Selenium.")
     parser.add_argument("--url", required=True, help="Plugin Boutique product URL")
     parser.add_argument("--threshold", required=True, type=float, help="Send email when price is below this amount")
@@ -11,6 +14,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    """Load configuration, build services, and run one price check."""
     args = parse_args()
 
     try:

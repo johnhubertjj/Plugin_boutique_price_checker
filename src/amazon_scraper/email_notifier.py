@@ -1,3 +1,5 @@
+"""Email delivery service for price alert notifications."""
+
 import smtplib
 from email.message import EmailMessage
 
@@ -5,6 +7,8 @@ from .models import PriceResult
 
 
 class EmailNotifier:
+    """Sends threshold-based price alert emails via SMTP over SSL."""
+
     def __init__(self, smtp_address: str, email_address: str, app_password: str) -> None:
         self.smtp_address = smtp_address
         self.email_address = email_address
