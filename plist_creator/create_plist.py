@@ -3,12 +3,21 @@
 from __future__ import annotations
 
 import argparse
+import json
 import plistlib
 from pathlib import Path
+from typing import Any
 
 
 def parse_args() -> argparse.Namespace:
-    """Parse CLI inputs for plist generation."""
+    """Parse CLI inputs for plist generation.
+
+    Args:
+        None.
+
+    Returns:
+        argparse.Namespace: Parsed arguments for plist creation.
+    """
     parser = argparse.ArgumentParser(
         description="Generate a launchd plist for plugin-boutique-alert."
     )
@@ -73,7 +82,15 @@ def parse_args() -> argparse.Namespace:
 
 
 def validate_time(hour: int, minute: int) -> None:
-    """Validate scheduling values for launchd."""
+    """Validate scheduling values for launchd.
+
+    Args:
+        hour: Launch hour in 24-hour format.
+        minute: Launch minute.
+
+    Returns:
+        None: Raises ``ValueError`` when values are out of range.
+    """
     if hour < 0 or hour > 23:
         raise ValueError("--hour must be between 0 and 23")
     if minute < 0 or minute > 59:
@@ -81,7 +98,14 @@ def validate_time(hour: int, minute: int) -> None:
 
 
 def build_plist(args: argparse.Namespace) -> dict:
-    """Build the launchd plist dictionary."""
+    """Build the launchd plist dictionary.
+
+    Args:
+        args: Parsed CLI arguments used to construct plist fields.
+
+    Returns:
+        dict: Dictionary ready for serialization with ``plistlib``.
+    """
     recipient = args.to or args.email_address
     program_arguments = [str(Path(args.command_path).expanduser())]
     if args.watchlist_file:
@@ -117,10 +141,53 @@ def build_plist(args: argparse.Namespace) -> dict:
     }
 
 
+def validate_watchlist_file(watchlist_file: str) -> str:
+    """Validate watchlist JSON file path and basic structure.
+
+    Args:
+        watchlist_file: Path to a JSON file containing watchlist entries.
+
+    Returns:
+        str: Expanded absolute-compatible watchlist file path for CLI usage.
+    """
+    path = Path(watchlist_file).expanduser()
+    if not path.exists():
+        raise ValueError(f"Watchlist file does not exist: {path}")
+    if path.suffix.lower() != ".json":
+        raise ValueError("Watchlist file must be a .json file")
+
+    with path.open("r", encoding="utf-8") as f:
+        data: Any = json.load(f)
+
+    if not isinstance(data, list) or not data:
+        raise ValueError("Watchlist file must contain a non-empty JSON array")
+
+    for index, item in enumerate(data):
+        if not isinstance(item, dict):
+            raise ValueError(f"Watchlist item at index {index} must be an object")
+        if not isinstance(item.get("url"), str) or not item["url"].strip():
+            raise ValueError(f"Watchlist item at index {index} is missing a valid 'url'")
+        try:
+            float(item.get("threshold"))
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"Watchlist item at index {index} has invalid 'threshold'") from exc
+
+    return str(path)
+
+
 def main() -> None:
-    """Generate and write the plist file."""
+    """Generate and write the plist file.
+
+    Args:
+        None.
+
+    Returns:
+        None: Writes plist output and prints usage instructions.
+    """
     args = parse_args()
     validate_time(args.hour, args.minute)
+    if args.watchlist_file:
+        args.watchlist_file = validate_watchlist_file(args.watchlist_file)
 
     plist_data = build_plist(args)
     output_path = Path(args.output).expanduser()

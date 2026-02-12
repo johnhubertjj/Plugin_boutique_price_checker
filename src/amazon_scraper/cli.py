@@ -7,7 +7,14 @@ from pathlib import Path
 from typing import Any
 
 def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments for single-product or watchlist mode."""
+    """Parse command-line arguments for single-product or watchlist mode.
+
+    Args:
+        None.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments with validated combinations.
+    """
     parser = argparse.ArgumentParser(description="Track Plugin Boutique prices with Selenium.")
     target_group = parser.add_mutually_exclusive_group(required=True)
     target_group.add_argument("--url", help="Plugin Boutique product URL")
@@ -32,7 +39,14 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_watchlist(watchlist_path: str) -> list[dict[str, Any]]:
-    """Load and validate watchlist JSON content."""
+    """Load and validate watchlist JSON content.
+
+    Args:
+        watchlist_path: Filesystem path to watchlist JSON file.
+
+    Returns:
+        list[dict[str, Any]]: Normalized watchlist entries with ``url``, ``threshold``, and ``to``.
+    """
     path = Path(watchlist_path).expanduser()
     if not path.exists():
         raise RuntimeError(f"Watchlist file does not exist: {path}")
@@ -75,7 +89,14 @@ def load_watchlist(watchlist_path: str) -> list[dict[str, Any]]:
 
 
 def main() -> None:
-    """Load configuration, build services, and run one or many price checks."""
+    """Load configuration, build services, and run one or many price checks.
+
+    Args:
+        None.
+
+    Returns:
+        None: Executes checks and sends alerts when thresholds are met.
+    """
     args = parse_args()
 
     try:

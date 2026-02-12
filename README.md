@@ -157,6 +157,37 @@ launchctl start com.example.pluginboutique.alert
 launchctl list | grep pluginboutique
 ```
 
+Expected output (example):
+
+```text
+12345    0    com.example.pluginboutique.alert
+```
+
+Where:
+
+- First column is the process ID (`-` if currently not running between schedule times).
+- Second column is the last exit status (`0` means success).
+- Third column is the LaunchAgent label.
+
+### Update watchlist later (macOS)
+
+If you buy an item and want to stop alerts for it, edit your `watchlist.json` and remove that entry.
+
+If the watchlist path is unchanged, you usually do not need to regenerate the plist. Reload the LaunchAgent:
+
+```bash
+launchctl unload ~/Library/LaunchAgents/com.example.pluginboutique.alert.plist
+launchctl load ~/Library/LaunchAgents/com.example.pluginboutique.alert.plist
+```
+
+If you changed schedule, label, or file paths, regenerate plist first, then reload:
+
+```bash
+python3 /ABSOLUTE/PATH/TO/plist_creator/create_plist.py ...your args...
+launchctl unload ~/Library/LaunchAgents/com.example.pluginboutique.alert.plist
+launchctl load ~/Library/LaunchAgents/com.example.pluginboutique.alert.plist
+```
+
 ### Linux (`cron`)
 
 1. Open crontab:
@@ -175,3 +206,4 @@ Notes:
 
 - Always use absolute paths in schedulers.
 - Test the command manually first before scheduling it.
+- For plist debugging and common error fixes, see `docs/plist_troubleshooting.md`.
