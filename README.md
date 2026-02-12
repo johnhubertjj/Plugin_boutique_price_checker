@@ -30,6 +30,36 @@ plugin-boutique-alert \
   --to "you@example.com"
 ```
 
+## Multiple URLs and thresholds (JSON watchlist)
+
+Create a JSON file (example: `watchlist.json`):
+
+```json
+[
+  {
+    "url": "https://www.pluginboutique.com/product/2-Effects/59-De-Esser/4392-Weiss-Deess",
+    "threshold": 100,
+    "to": "alerts1@example.com"
+  },
+  {
+    "url": "https://www.pluginboutique.com/product/1-Instruments/4-Synth/1234-Example",
+    "threshold": 49.99
+  }
+]
+```
+
+Run:
+
+```bash
+plugin-boutique-alert --watchlist-file "/absolute/path/to/watchlist.json" --to "default@example.com"
+```
+
+Notes:
+
+- `to` is optional per item.
+- `--to` acts as default recipient for any item missing `to`.
+- If `--to` is not set, default recipient is `EMAIL_ADDRESS`.
+
 ## Environment variables
 
 Set these in your shell or in a `.env` file:
@@ -93,8 +123,7 @@ which plugin-boutique-alert
   <key>ProgramArguments</key>
   <array>
     <string>/ABSOLUTE/PATH/TO/plugin-boutique-alert</string>
-    <string>--url</string><string>https://www.pluginboutique.com/product/...</string>
-    <string>--threshold</string><string>100</string>
+    <string>--watchlist-file</string><string>/ABSOLUTE/PATH/TO/watchlist.json</string>
     <string>--to</string><string>you@example.com</string>
   </array>
   <key>EnvironmentVariables</key>
@@ -139,7 +168,7 @@ crontab -e
 2. Add a daily job (example: 09:00 every day):
 
 ```cron
-0 9 * * * EMAIL_ADDRESS=your_email@gmail.com EMAIL_PASSWORD=your_app_password SMTP_ADDRESS=smtp.gmail.com /ABSOLUTE/PATH/TO/plugin-boutique-alert --url "https://www.pluginboutique.com/product/..." --threshold 100 --to "you@example.com" >> /tmp/pluginboutique-alert.log 2>&1
+0 9 * * * EMAIL_ADDRESS=your_email@gmail.com EMAIL_PASSWORD=your_app_password SMTP_ADDRESS=smtp.gmail.com /ABSOLUTE/PATH/TO/plugin-boutique-alert --watchlist-file "/ABSOLUTE/PATH/TO/watchlist.json" --to "you@example.com" >> /tmp/pluginboutique-alert.log 2>&1
 ```
 
 Notes:
