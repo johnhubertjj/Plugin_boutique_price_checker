@@ -1,0 +1,16 @@
+.git
+.github
+.idea
+.pytest_cache
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.db
+.coverage
+dist
+build
+alembic/__pycache__
+tests
+
