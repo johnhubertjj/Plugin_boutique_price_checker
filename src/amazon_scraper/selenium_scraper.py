@@ -1,3 +1,5 @@
+"""Selenium-based scraper for extracting product prices from Plugin Boutique."""
+
 import re
 
 from selenium import webdriver
@@ -13,6 +15,8 @@ from .models import PriceResult
 
 
 class PluginBoutiqueSeleniumScraper:
+    """Fetches a product page with Selenium and extracts the closest product price."""
+
     def __init__(self, headless: bool = True, timeout_seconds: int = 20) -> None:
         self.headless = headless
         self.timeout_seconds = timeout_seconds
