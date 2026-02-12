@@ -11,6 +11,11 @@ Small utility to generate a macOS `launchd` plist for `plugin-boutique-alert`.
 
 It can also set schedule, URL, threshold, and recipient email.
 
+Mode notes:
+
+- Use either `--url` (single product mode) or `--watchlist-file` (multi product mode).
+- If neither is provided, it defaults to single product mode with placeholder URL.
+
 ## Usage
 
 ```bash
@@ -67,6 +72,20 @@ Watchlist notes:
 - Each item must include `url` and `threshold`.
 - Item-level `to` is optional.
 - `--to` is used as default recipient when an item omits `to`.
+- `--watchlist-file` must point to an existing `.json` file.
+- The file must contain a non-empty JSON array.
+- Every item must be an object with:
+  - `url`: non-empty string
+  - `threshold`: numeric value (int/float or numeric string)
+
+Example of invalid watchlist entries:
+
+```json
+[
+  { "url": "", "threshold": 50 },
+  { "url": "https://www.pluginboutique.com/product/...", "threshold": "abc" }
+]
+```
 
 ## Load and run
 
@@ -91,3 +110,9 @@ Notes:
 
 - If `App passwords` is missing, 2-Step Verification is usually not enabled yet.
 - Some Google Workspace admins disable App Passwords.
+
+## Troubleshooting
+
+For common launchd/plist errors and fixes (including `Load failed: 5`, exit code `78`, invalid command path, and watchlist validation), see:
+
+- `/Users/johnjoseph/PycharmProjects/amazon_scraper/docs/plist_troubleshooting.md`
