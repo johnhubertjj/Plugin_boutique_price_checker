@@ -37,7 +37,13 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--hour", type=int, default=9, help="Run hour (0-23)")
     parser.add_argument("--minute", type=int, default=0, help="Run minute (0-59)")
-    parser.add_argument(
+    target_group = parser.add_mutually_exclusive_group()
+    target_group.add_argument(
+        "--watchlist-file",
+        default=None,
+        help="Path to watchlist JSON file for multiple URL/threshold entries",
+    )
+    target_group.add_argument(
         "--url",
         default="https://www.pluginboutique.com/product/...",
         help="Plugin Boutique product URL",
@@ -46,7 +52,7 @@ def parse_args() -> argparse.Namespace:
         "--threshold",
         type=float,
         default=100.0,
-        help="Send alert when price is below this threshold",
+        help="Send alert when price is below this threshold (single URL mode)",
     )
     parser.add_argument(
         "--to",
@@ -77,17 +83,25 @@ def validate_time(hour: int, minute: int) -> None:
 def build_plist(args: argparse.Namespace) -> dict:
     """Build the launchd plist dictionary."""
     recipient = args.to or args.email_address
+    program_arguments = [str(Path(args.command_path).expanduser())]
+    if args.watchlist_file:
+        program_arguments.extend(["--watchlist-file", str(Path(args.watchlist_file).expanduser())])
+        program_arguments.extend(["--to", recipient])
+    else:
+        program_arguments.extend(
+            [
+                "--url",
+                args.url,
+                "--threshold",
+                str(args.threshold),
+                "--to",
+                recipient,
+            ]
+        )
+
     return {
         "Label": args.label,
-        "ProgramArguments": [
-            str(Path(args.command_path).expanduser()),
-            "--url",
-            args.url,
-            "--threshold",
-            str(args.threshold),
-            "--to",
-            recipient,
-        ],
+        "ProgramArguments": program_arguments,
         "EnvironmentVariables": {
             "EMAIL_ADDRESS": args.email_address,
             "EMAIL_PASSWORD": args.email_password,

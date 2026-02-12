@@ -30,6 +30,44 @@ python3 create_plist.py \
 
 If `--to` is not provided, it defaults to `--email-address`.
 
+## Multiple URLs and thresholds with JSON
+
+Create a watchlist JSON file:
+
+```json
+[
+  {
+    "url": "https://www.pluginboutique.com/product/2-Effects/59-De-Esser/4392-Weiss-Deess",
+    "threshold": 100,
+    "to": "alerts1@example.com"
+  },
+  {
+    "url": "https://www.pluginboutique.com/product/1-Instruments/4-Synth/1234-Example",
+    "threshold": 49.99
+  }
+]
+```
+
+Then generate plist in watchlist mode:
+
+```bash
+python3 create_plist.py \
+  --command-path "/absolute/path/to/plugin-boutique-alert" \
+  --email-address "your_email@gmail.com" \
+  --email-password "your_google_app_password" \
+  --smtp-address "smtp.gmail.com" \
+  --watchlist-file "/absolute/path/to/watchlist.json" \
+  --to "default@example.com" \
+  --hour 9 \
+  --minute 0
+```
+
+Watchlist notes:
+
+- Each item must include `url` and `threshold`.
+- Item-level `to` is optional.
+- `--to` is used as default recipient when an item omits `to`.
+
 ## Load and run
 
 ```bash
