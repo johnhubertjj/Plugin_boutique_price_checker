@@ -5,7 +5,7 @@ import sys
 
 import pytest
 
-from amazon_scraper import cli
+from plugin_boutique_price_checker import cli
 
 
 def test_parse_args_single_url_mode(monkeypatch) -> None:

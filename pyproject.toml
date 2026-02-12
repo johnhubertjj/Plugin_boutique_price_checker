@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "amazon-scraper"
+name = "plugin-boutique-price-checker"
 version = "0.1.0"
 description = "Plugin Boutique price tracker"
 readme = "README.md"
@@ -21,7 +21,7 @@ dev = [
 ]
 
 [project.scripts]
-plugin-boutique-alert = "amazon_scraper.cli:main"
+plugin-boutique-alert = "plugin_boutique_price_checker.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

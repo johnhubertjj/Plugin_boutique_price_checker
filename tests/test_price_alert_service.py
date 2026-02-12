@@ -1,7 +1,7 @@
 """Unit tests for alert orchestration logic."""
 
-from amazon_scraper.models import PriceResult
-from amazon_scraper.price_alert_service import PriceAlertService
+from plugin_boutique_price_checker.models import PriceResult
+from plugin_boutique_price_checker.price_alert_service import PriceAlertService
 
 
 class StubScraper:

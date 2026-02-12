@@ -9,6 +9,13 @@ Installable CLI for monitoring a Plugin Boutique product price and sending an em
 
 ## Install
 
+Clone and enter the project:
+
+```bash
+git clone https://github.com/<your-username>/plugin_boutique_price_checker.git
+cd plugin_boutique_price_checker
+```
+
 ### Option 1: Local project
 
 ```bash
@@ -81,7 +88,7 @@ SMTP_ADDRESS=smtp.gmail.com
 Run as module:
 
 ```bash
-python -m amazon_scraper \
+python -m plugin_boutique_price_checker \
   --url "https://www.pluginboutique.com/product/2-Effects/59-De-Esser/4392-Weiss-Deess" \
   --threshold 100 \
   --to "you@example.com"
