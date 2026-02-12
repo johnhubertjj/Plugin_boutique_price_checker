@@ -10,3 +10,4 @@ watchlist.json
 
 # Virtual environments
 .venv
+.env
