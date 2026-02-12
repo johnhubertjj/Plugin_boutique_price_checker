@@ -6,6 +6,8 @@ dist/
 wheels/
 *.egg-info
 /.idea
+watchlist.json
 
 # Virtual environments
 .venv
+.env
