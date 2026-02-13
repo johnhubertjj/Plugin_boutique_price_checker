@@ -29,3 +29,9 @@ snapshots/*.tar.gz
 
 # OS files
 .DS_Store
+
+# Mobile app local artifacts
+mobile_app/node_modules/
+mobile_app/.expo/
+mobile_app/.expo-shared/
+mobile_app/.env

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PB Price Checker</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <h1>PB Price Checker</h1>
+
+      <section class="card">
+        <h2>API</h2>
+        <form id="config-form">
+          <label for="api-base-url">Base URL</label>
+          <input id="api-base-url" type="url" placeholder="http://127.0.0.1:8000" required />
+          <button type="submit">Save API URL</button>
+          <p class="muted">Saving prompts for host permission on this API origin.</p>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Auth</h2>
+        <p id="auth-status">Not authenticated.</p>
+        <p id="dev-code" class="muted"></p>
+
+        <form id="register-start-form">
+          <label for="register-email">Email</label>
+          <input id="register-email" name="email" type="email" required />
+          <label for="register-phone">Phone</label>
+          <input id="register-phone" name="phone_number" type="tel" minlength="7" maxlength="32" required />
+          <button type="submit">Start Registration</button>
+        </form>
+
+        <form id="verify-email-form">
+          <label for="verify-email-code">Email OTP</label>
+          <input id="verify-email-code" name="code" minlength="6" maxlength="6" required />
+          <button type="submit">Verify Email</button>
+        </form>
+
+        <form id="verify-phone-form">
+          <label for="verify-phone-code">Phone OTP</label>
+          <input id="verify-phone-code" name="code" minlength="6" maxlength="6" required />
+          <button type="submit">Verify Phone</button>
+        </form>
+
+        <form id="login-start-form">
+          <label for="login-email">Login Email</label>
+          <input id="login-email" name="email" type="email" required />
+          <button type="submit">Start Login</button>
+        </form>
+
+        <form id="login-verify-form">
+          <label for="login-code">Login OTP</label>
+          <input id="login-code" name="code" minlength="6" maxlength="6" required />
+          <button type="submit">Verify Login</button>
+        </form>
+
+        <div class="row">
+          <button id="refresh-button" type="button">Refresh</button>
+          <button id="logout-button" type="button" class="danger">Logout</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Watchlist</h2>
+        <form id="create-item-form">
+          <label for="product-url">Product URL</label>
+          <input id="product-url" name="product_url" type="url" required />
+          <label for="threshold">Threshold</label>
+          <input id="threshold" name="threshold" type="number" step="0.01" min="0.01" required />
+          <button type="submit">Add Item</button>
+        </form>
+
+        <div id="items"></div>
+      </section>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

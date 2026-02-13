@@ -31,6 +31,11 @@ Detailed build/run guide: `docs/deployable_scaffold_guide.md`.
 Beginner walkthrough: `docs/beginners_guide.md`.
 GCP production runbook: `docs/gcp_production_runbook.md`.
 GCP cost estimate: `docs/gcp_cost_estimate.md`.
+Mobile scaffold guide: `docs/mobile_scaffold_guide.md`.
+Chrome extension scaffold guide: `docs/chrome_extension_scaffold_guide.md`.
+Chrome extension production checklist: `docs/chrome_extension_production_checklist.md`.
+Chrome Web Store listing copy template: `docs/chrome_web_store_listing_copy.md`.
+Chrome extension screenshot checklist: `docs/chrome_extension_screenshot_checklist.md`.
 
 ## Requirements
 

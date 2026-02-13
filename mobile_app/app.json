@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Plugin Boutique Tracker",
+    "slug": "plugin-boutique-tracker",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pluginboutique.tracker"
+    },
+    "android": {
+      "package": "com.pluginboutique.tracker"
+    }
+  }
+}
