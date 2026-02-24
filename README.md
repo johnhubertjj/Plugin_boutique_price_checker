@@ -2,6 +2,36 @@
 
 Installable CLI for monitoring a Plugin Boutique product price and sending an email alert when the price falls below your threshold.
 
+## Deployable scaffold (API + worker)
+
+This repo now includes a backend scaffold so the scraper can power a web app or mobile app:
+
+- API: `plugin_boutique_price_checker.web.api` (FastAPI)
+- Worker: `plugin_boutique_price_checker.web.worker` (polling background process)
+- DB models: users, watchlist items, and historical check runs (SQLAlchemy)
+
+Quick start:
+
+```bash
+uv sync
+uv run plugin-boutique-api
+```
+
+In a second terminal:
+
+```bash
+uv run plugin-boutique-worker
+```
+
+Open API docs at `http://localhost:8000/docs`.
+Open the minimal dashboard at `http://localhost:8000/`.
+The dashboard now includes registration/login with email verification + phone OTP.
+
+Detailed build/run guide: `docs/deployable_scaffold_guide.md`.
+Beginner walkthrough: `docs/beginners_guide.md`.
+GCP production runbook: `docs/gcp_production_runbook.md`.
+GCP cost estimate: `docs/gcp_cost_estimate.md`.
+
 ## Requirements
 
 - Python 3.10+
@@ -9,22 +39,29 @@ Installable CLI for monitoring a Plugin Boutique product price and sending an em
 
 ## Install
 
-### Option 1: Local project
+Clone and enter the project:
 
 ```bash
-pip install .
+git clone https://github.com/<your-username>/plugin_boutique_price_checker.git
+cd plugin_boutique_price_checker
 ```
 
-### Option 2: Editable (for development)
+### Option 1: Project install (recommended)
 
 ```bash
-pip install -e .
+uv sync
+```
+
+### Option 2: Include dev dependencies
+
+```bash
+uv sync --extra dev
 ```
 
 After install, run the command:
 
 ```bash
-plugin-boutique-alert \
+uv run plugin-boutique-alert \
   --url "https://www.pluginboutique.com/product/2-Effects/59-De-Esser/4392-Weiss-Deess" \
   --threshold 100 \
   --to "you@example.com"
@@ -67,6 +104,11 @@ Set these in your shell or in a `.env` file:
 - `EMAIL_ADDRESS`
 - `EMAIL_PASSWORD`
 - `SMTP_ADDRESS`
+- `AUTH_DEV_MODE` (`true` by default; when true, OTP codes are shown in API/dashboard responses for local testing)
+- `DB_AUTO_CREATE` (`true` by default for local development; set `false` in production and use Alembic migrations)
+- `TWILIO_ACCOUNT_SID` (required when `AUTH_DEV_MODE=false` for phone OTP)
+- `TWILIO_AUTH_TOKEN` (required when `AUTH_DEV_MODE=false` for phone OTP)
+- `TWILIO_FROM_NUMBER` or `TWILIO_MESSAGING_SERVICE_SID` (required when `AUTH_DEV_MODE=false`)
 
 Example for Gmail SMTP:
 
@@ -74,6 +116,11 @@ Example for Gmail SMTP:
 EMAIL_ADDRESS=your_email@gmail.com
 EMAIL_PASSWORD=your_app_password
 SMTP_ADDRESS=smtp.gmail.com
+AUTH_DEV_MODE=true
+DB_AUTO_CREATE=true
+TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_FROM_NUMBER=+15551234567
 ```
 
 ## Other ways to run
@@ -81,7 +128,7 @@ SMTP_ADDRESS=smtp.gmail.com
 Run as module:
 
 ```bash
-python -m amazon_scraper \
+uv run python -m plugin_boutique_price_checker \
   --url "https://www.pluginboutique.com/product/2-Effects/59-De-Esser/4392-Weiss-Deess" \
   --threshold 100 \
   --to "you@example.com"
@@ -90,7 +137,7 @@ python -m amazon_scraper \
 Run the compatibility wrapper from repo root:
 
 ```bash
-python main.py \
+uv run python main.py \
   --url "https://www.pluginboutique.com/product/2-Effects/59-De-Esser/4392-Weiss-Deess" \
   --threshold 100 \
   --to "you@example.com"
@@ -106,10 +153,10 @@ Use a scheduler so the command runs automatically once per day.
 
 ### macOS (`launchd`)
 
-1. Find your installed CLI path:
+1. Use the project-local CLI path created by `uv sync`:
 
 ```bash
-which plugin-boutique-alert
+realpath .venv/bin/plugin-boutique-alert
 ```
 
 2. Create `~/Library/LaunchAgents/com.example.pluginboutique.alert.plist`:

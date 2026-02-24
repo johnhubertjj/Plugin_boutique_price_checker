@@ -1,7 +1,7 @@
 """Unit tests for SMTP email notifications."""
 
-from amazon_scraper.email_notifier import EmailNotifier
-from amazon_scraper.models import PriceResult
+from plugin_boutique_price_checker.email_notifier import EmailNotifier
+from plugin_boutique_price_checker.models import PriceResult
 
 
 class FakeSMTP:
@@ -32,7 +32,7 @@ def test_send_price_alert_formats_and_sends_email(monkeypatch) -> None:
         captured["smtp"] = smtp
         return smtp
 
-    monkeypatch.setattr("amazon_scraper.email_notifier.smtplib.SMTP_SSL", fake_smtp_factory)
+    monkeypatch.setattr("plugin_boutique_price_checker.email_notifier.smtplib.SMTP_SSL", fake_smtp_factory)
 
     notifier = EmailNotifier(
         smtp_address="smtp.gmail.com",

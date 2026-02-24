@@ -5,7 +5,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from amazon_scraper.cli import main
+from plugin_boutique_price_checker.cli import main
 
 
 if __name__ == "__main__":

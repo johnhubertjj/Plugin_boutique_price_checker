@@ -1,0 +1,140 @@
+substitutions:
+  _REGION: us-central1
+  _REPOSITORY: plugin-boutique
+  _API_SERVICE: plugin-boutique-api
+  _WORKER_JOB: plugin-boutique-worker
+  _MIGRATOR_JOB: plugin-boutique-migrate
+  _CLOUDSQL_CONNECTION: ""
+  _SERVICE_ACCOUNT: ""
+  _DATABASE_URL_SECRET: DATABASE_URL
+  _SMTP_ADDRESS_SECRET: SMTP_ADDRESS
+  _EMAIL_ADDRESS_SECRET: EMAIL_ADDRESS
+  _EMAIL_PASSWORD_SECRET: EMAIL_PASSWORD
+  _TWILIO_ACCOUNT_SID_SECRET: TWILIO_ACCOUNT_SID
+  _TWILIO_AUTH_TOKEN_SECRET: TWILIO_AUTH_TOKEN
+  _TWILIO_FROM_NUMBER_SECRET: TWILIO_FROM_NUMBER
+  _CORS_ALLOWED_ORIGINS: ""
+  _AUTH_COOKIE_SECURE: "true"
+  _AUTH_DEV_MODE: "false"
+  _WORKER_SLEEP_SECONDS: "300"
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    id: Build API image
+    args:
+      - build
+      - -f
+      - Dockerfile.api
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/api:$COMMIT_SHA
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    id: Build Worker image
+    args:
+      - build
+      - -f
+      - Dockerfile.worker
+      - -t
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/worker:$COMMIT_SHA
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    id: Push API image
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/api:$COMMIT_SHA
+
+  - name: gcr.io/cloud-builders/docker
+    id: Push Worker image
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/worker:$COMMIT_SHA
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: Deploy API service
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_API_SERVICE}
+      - --image
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/api:$COMMIT_SHA
+      - --region
+      - ${_REGION}
+      - --platform
+      - managed
+      - --allow-unauthenticated
+      - --port
+      - "8080"
+      - --service-account
+      - ${_SERVICE_ACCOUNT}
+      - --set-env-vars
+      - APP_ENV=production,DB_AUTO_CREATE=false,AUTH_DEV_MODE=${_AUTH_DEV_MODE},WORKER_SLEEP_SECONDS=${_WORKER_SLEEP_SECONDS},CORS_ALLOWED_ORIGINS=${_CORS_ALLOWED_ORIGINS},AUTH_COOKIE_SECURE=${_AUTH_COOKIE_SECURE}
+      - --set-secrets
+      - DATABASE_URL=${_DATABASE_URL_SECRET}:latest,SMTP_ADDRESS=${_SMTP_ADDRESS_SECRET}:latest,EMAIL_ADDRESS=${_EMAIL_ADDRESS_SECRET}:latest,EMAIL_PASSWORD=${_EMAIL_PASSWORD_SECRET}:latest,TWILIO_ACCOUNT_SID=${_TWILIO_ACCOUNT_SID_SECRET}:latest,TWILIO_AUTH_TOKEN=${_TWILIO_AUTH_TOKEN_SECRET}:latest,TWILIO_FROM_NUMBER=${_TWILIO_FROM_NUMBER_SECRET}:latest
+      - --set-cloudsql-instances
+      - ${_CLOUDSQL_CONNECTION}
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: Deploy migration job
+    entrypoint: gcloud
+    args:
+      - run
+      - jobs
+      - deploy
+      - ${_MIGRATOR_JOB}
+      - --region
+      - ${_REGION}
+      - --image
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/api:$COMMIT_SHA
+      - --command
+      - alembic
+      - --args
+      - upgrade,head
+      - --service-account
+      - ${_SERVICE_ACCOUNT}
+      - --set-env-vars
+      - APP_ENV=production,DB_AUTO_CREATE=false
+      - --set-secrets
+      - DATABASE_URL=${_DATABASE_URL_SECRET}:latest
+      - --set-cloudsql-instances
+      - ${_CLOUDSQL_CONNECTION}
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: Run migration job
+    entrypoint: gcloud
+    args:
+      - run
+      - jobs
+      - execute
+      - ${_MIGRATOR_JOB}
+      - --region
+      - ${_REGION}
+      - --wait
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: Deploy worker job
+    entrypoint: gcloud
+    args:
+      - run
+      - jobs
+      - deploy
+      - ${_WORKER_JOB}
+      - --region
+      - ${_REGION}
+      - --image
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/worker:$COMMIT_SHA
+      - --service-account
+      - ${_SERVICE_ACCOUNT}
+      - --set-env-vars
+      - APP_ENV=production,DB_AUTO_CREATE=false,WORKER_RUN_ONCE=true,AUTH_DEV_MODE=false
+      - --set-secrets
+      - DATABASE_URL=${_DATABASE_URL_SECRET}:latest,SMTP_ADDRESS=${_SMTP_ADDRESS_SECRET}:latest,EMAIL_ADDRESS=${_EMAIL_ADDRESS_SECRET}:latest,EMAIL_PASSWORD=${_EMAIL_PASSWORD_SECRET}:latest
+      - --set-cloudsql-instances
+      - ${_CLOUDSQL_CONNECTION}
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/api:$COMMIT_SHA
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/worker:$COMMIT_SHA
+

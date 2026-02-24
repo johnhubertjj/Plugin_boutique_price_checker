@@ -115,4 +115,4 @@ Notes:
 
 For common launchd/plist errors and fixes (including `Load failed: 5`, exit code `78`, invalid command path, and watchlist validation), see:
 
-- `/Users/johnjoseph/PycharmProjects/amazon_scraper/docs/plist_troubleshooting.md`
+- `/Users/johnjoseph/PycharmProjects/plugin_boutique_price_checker/docs/plist_troubleshooting.md`

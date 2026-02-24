@@ -1,6 +1,6 @@
 """Unit tests for data models."""
 
-from amazon_scraper.models import PriceResult
+from plugin_boutique_price_checker.models import PriceResult
 
 
 def test_price_result_formatted_two_decimals() -> None:

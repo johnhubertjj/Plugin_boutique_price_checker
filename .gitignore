@@ -7,7 +7,25 @@ wheels/
 *.egg-info
 /.idea
 watchlist.json
+.coverage
+*.log
+
+# Local runtime data
+plugin_boutique.db
+*.sqlite
+*.sqlite3
 
 # Virtual environments
 .venv
 .env
+
+# Snapshot archives (large local artifacts)
+snapshots/*.tar.gz
+
+# Terraform local state
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# OS files
+.DS_Store

@@ -1,0 +1,33 @@
+name: Deploy GCP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOYER_SERVICE_ACCOUNT }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Submit Cloud Build deploy
+        run: |
+          gcloud builds submit . \
+            --config cloudbuild.yaml \
+            --substitutions "_REGION=${{ secrets.GCP_REGION }},_REPOSITORY=${{ secrets.GCP_ARTIFACT_REPOSITORY }},_CLOUDSQL_CONNECTION=${{ secrets.GCP_CLOUDSQL_CONNECTION }},_SERVICE_ACCOUNT=${{ secrets.GCP_APP_SERVICE_ACCOUNT }},_CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}"
+

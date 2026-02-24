@@ -1,0 +1,15 @@
+project_id           = "your-gcp-project-id"
+region               = "us-central1"
+name_prefix          = "plugin-boutique"
+artifact_repository  = "plugin-boutique"
+api_service_name     = "plugin-boutique-api"
+worker_job_name      = "plugin-boutique-worker"
+api_image            = "us-central1-docker.pkg.dev/your-gcp-project-id/plugin-boutique/api:latest"
+worker_image         = "us-central1-docker.pkg.dev/your-gcp-project-id/plugin-boutique/worker:latest"
+cors_allowed_origins = "https://your-frontend-domain.com"
+database_name        = "plugin_boutique"
+database_user        = "plugin_boutique"
+cloudsql_tier        = "db-custom-1-3840"
+deletion_protection  = true
+worker_cron          = "*/10 * * * *"
+
